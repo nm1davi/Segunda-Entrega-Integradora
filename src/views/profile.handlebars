@@ -1,0 +1,57 @@
+<article>
+      <header>
+            <h1>Te damos la Bienvenida!! 🤝</h1>
+            <p><strong>Nombre:</strong> {{user.first_name}}</p>
+            <p><strong>Apellido:</strong> {{user.last_name}}</p>
+            <p><strong>Email:</strong> {{user.email}}</p>
+            <p><strong>Role:</strong> {{user.role}}</p>
+            <p><strong>Edad:</strong> {{user.age}}</p>
+            <p><strong>Carrito:</strong> {{user.cart}}</p>
+      </header>
+
+      <section id="productsSection">
+            <h2>Productos Disponibles</h2>
+            <table id="productsTable">
+                  <thead>
+                        <tr>
+                              <th scope="col">N°</th>
+                              <th scope="col">Nombre</th>
+                              <th scope="col">Descripción</th>
+                              <th scope="col">Precio</th>
+                              <th scope="col">Imagen</th>
+                              <th scope="col">Código</th>
+                              <th scope="col">Stock</th>
+                              <th scope="col">Categoría</th>
+                              <th scope="col">Estado</th>
+                              <th id="col">ID</th>
+                        </tr>
+                  </thead>
+                  <tbody>
+                        {{#each products}}
+                        <tr>
+                              <th scope="row">{{@index}}</th>
+                              <td>{{this.title}}</td>
+                              <td>{{this.description}}</td>
+                              <td>{{this.price}}</td>
+                              <td>{{this.thumbnail}}</td>
+                              <td>{{this.code}}</td>
+                              <td>{{this.stock}}</td>
+                              <td>{{this.category}}</td>
+                              <td>{{this.status}}</td>
+                              <td>{{this._id}}</td>
+                              <td>
+                                    <button class="boton-carrito" onclick="agregarAlCarrito(this.dataset.cart, '{{this._id}}')" data-cart="{{user.cart}}">+ Carrito</button>
+                              </td>
+                        </tr>
+                        {{/each}}
+                  </tbody>
+            </table>
+      </section>
+
+      <footer>
+            <a href="/api/session/logout" role="button">Cerrar Sesión</a>
+            <a href="/api/cart/{{user.cart}}" role="button">Ir al Carrito</a>
+      </footer>
+</article>
+
+<script src="js/carrito.js"></script>

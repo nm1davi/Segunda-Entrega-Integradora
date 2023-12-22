@@ -1,0 +1,23 @@
+<h1>Detalles del Carrito</h1>
+<h2>Carrito ID: {{cartId}}</h2>
+<ul>
+  {{#each products}}
+  <li>
+    <p>Producto ID: {{this._id}}</p>
+    <p>Título: {{this.title}}</p>
+    <p>Descripción: {{this.description}}</p>
+    <p>Precio: {{this.price}}</p>
+    <p>Thumbnail: {{this.thumbnail}}</p>
+    <p>Código: {{this.code}}</p>
+    <p>Stock: {{this.stock}}</p>
+    <p>Categoría: {{this.category}}</p>
+    <p>Estado: {{this.status}}</p>
+    <p>Cantidad: {{this.quantity}}</p>
+  </li>
+  {{!-- <button class="boton-eliminar" onclick="eliminarProductoDelCarrito('{{cartId}}', '{{this._id}}')">Eliminar Producto</button> --}}
+  {{/each}}
+</ul>
+<footer>
+  {{!-- <a href="/api/sessions/profile" role="button">Volver</a> --}}
+    {{!-- <button class="boton-eliminar" onclick="eliminarProductoDelCarrito('{{cartId}}', '{{this._id}}')">Eliminar Producto</button> --}}
+</footer>
