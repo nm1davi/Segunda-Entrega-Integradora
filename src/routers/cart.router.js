@@ -1,7 +1,11 @@
-
 import { Router } from 'express';
 import Cart from '../models/cart.model.js';
 import Producto from '../models/product.model.js';
+import CartController from '../controllers/carts.controllers.js';
+
+import Handlebars from 'handlebars';
+
+
 
 
 const router = Router();
@@ -10,34 +14,26 @@ const myMiddleware = (req, res, next) => {
   console.log("Se ha recibido una nueva solicitud de Carrito");
   next();
 };
+Handlebars.registerHelper('multiply', function(a, b) {
+  return a * b;
+});
+
 
 router.get('/:cid', myMiddleware, async (req, res) => {
   const { cid } = req.params;
-
   try {
-    const cart = await Cart.findById(cid).populate('productos.product');
+    const cartInfo = await CartController.getCartById(cid);
 
-    if (!cart) {
+
+    if (!cartInfo) {
       return res.status(404).json({ error: 'Carrito no encontrado' });
     }
 
     res.render('cart', {
       title: "Carrito",
-      cartId: cart._id,
-      products: cart.productos.map(item => {
-        return {
-          _id: item.product._id,
-          title: item.product.title,
-          description: item.product.description,
-          price: item.product.price,
-          thumbnail: item.product.thumbnail,
-          code: item.product.code,
-          stock: item.product.stock,
-          category: item.product.category,
-          status: item.product.status,
-          quantity: item.quantity
-        };
-      }),
+      cartId: cartInfo._id,
+      user: cartInfo.user,
+      products: cartInfo.products,
     });
   } catch (error) {
     console.error('Error: ', error);
@@ -129,19 +125,31 @@ const checkCartExists = async (req, res, next) => {
   }
 };
 
-// Eliminar un producto específico del carrito
-router.delete('/:cid/products/:pid', checkCartExists, async (req, res) => {
-  const { pid } = req.params;
+// Eliminar una unidad del producto específico del carrito
+router.delete('/:cid/product/:pid', checkCartExists, async (req, res) => {
+  const { cid, pid } = req.params;
+
   try {
     const { cart } = req;
-    cart.productos = cart.productos.filter(product => !product._id.equals(pid));
+    const productIndex = cart.productos.findIndex(product => product.product._id.toString() === pid);
+
+    if (productIndex !== -1) {
+      if (cart.productos[productIndex].quantity > 1) {
+        cart.productos[productIndex].quantity -= 1; // Restar una unidad
+      } else {
+        cart.productos.splice(productIndex, 1); // Si la cantidad es 1, eliminar completamente el producto
+      }
+    }
+
     await cart.save();
-    res.status(200).json({ message: 'Producto eliminado del carrito con éxito', cart });
+    res.status(200).json({ message: 'Se eliminó una unidad del producto del carrito', cart });
   } catch (error) {
     console.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+
 
 // Actualizar la cantidad de un producto en el carrito
 router.put('/:cid/products/:pid', checkCartExists, async (req, res) => {

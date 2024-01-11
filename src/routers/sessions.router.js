@@ -33,7 +33,7 @@ router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '
 router.post("/sessions/register", passport.authenticate('register', {failureRedirect: '/register'}) ,async (req, res) => {
       req.session.user = req.user;
       // Redirecciono a login
-      res.redirect("/");
+      res.redirect("/login");
 });
 
 //Recuperar contraseña
@@ -57,7 +57,7 @@ router.post('/sessions/recovery-password', async (req, res) =>{
       }
       user.password = createHash(password);
       await UserModel.updateOne({ email }, user);
-      res.redirect('/');
+      res.redirect('/login');
 })
 
 //Para ver el perfil de una persona

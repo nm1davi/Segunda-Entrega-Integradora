@@ -43,9 +43,10 @@ export const init = () => {
       }));
 
       const githubOpts = {
-            clientID: 'Iv1.4354af7a77f3e166',
+            
+            clientID: "Iv1.4354af7a77f3e166",
             clientSecret: "74ea0a09ddc9d6fe58259d1278b6cf47d2d8e64d",
-            callbackURL: 'http://localhost:8080/api/sessions/github/callback',
+            callbackURL: "http://localhost:8080/api/sessions/github/callback",
           };
           passport.use('github', new GithubStrategy(githubOpts, async (accesstoken, refreshToken, profile, done) => {
             const email = profile._json.email;

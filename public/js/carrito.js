@@ -1,74 +1,76 @@
-//Agregar un producto al carrito
-document.addEventListener('DOMContentLoaded', () => {
-  function agregarAlCarrito(productId) {
-    const paragraphs = document.querySelectorAll('p');
-    let userCartId = null;
-    paragraphs.forEach(paragraph => {
-      if (paragraph.textContent.includes('Carrito')) {
-        userCartId = paragraph.textContent.split(':')[1].trim();
-      }
+
+async function agregarAlCarrito(cartId, productId, productTitle) {
+  const cartIdString = cartId.toString();
+  try {
+    const response = await fetch(`/api/cart/${cartIdString}/product/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ quantity: 1 }) // Puedes ajustar la cantidad aquí si es dinámica
     });
 
-    if (userCartId) {
-      fetch(`/api/cart/${userCartId}/product/${productId}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ quantity: 1 }),
-      })
-      .then((response) => {
-        if (response.ok) {
-          return response.json();
-        }
-        throw new Error('Error al agregar producto al carrito');
-      })
-      .then((data) => {
-        console.log(data);
-        alert('Producto agregado al carrito correctamente');
-      })
-      .catch((error) => {
-        console.error(error);
+    if (response.ok) {
+      // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje al usuario
+      console.log('Producto agregado al carrito con éxito');
+      Swal.fire(`${productTitle} agregado correctamente`).then(()=>{
+        setTimeout(() => {
+          location.reload();
+        }, 100);
       });
     } else {
-      console.error('No se encontró el ID del carrito');
+      // Manejar errores en la respuesta
+      console.error('Error al agregar el producto al carrito');
     }
+  } catch (error) {
+    // Manejar errores en la solicitud
+    console.error('Error de red:', error);
   }
-
-  const buttons = document.querySelectorAll('.boton-carrito');
-  buttons.forEach(button => {
-    button.addEventListener('click', () => {
-      const productId = button.parentElement.previousElementSibling.textContent;
-      agregarAlCarrito(productId);
-    });
-  });
-});
+  
+}
 
 //Eliminar un producto del carrito
-function eliminarProductoDelCarrito(cartId, productId) {
-  fetch(`/api/cart/${cartId}/products/${productId}`, {
-    method: 'DELETE',
-  })
-  .then((response) => {
+async function eliminarProductoDelCarrito(cartId, productId, productTitle) {
+  const cartIdString = cartId.toString();
+  try {
+    const response = await fetch(`/api/cart/${cartIdString}/product/${productId}`, {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+    });
     if (response.ok) {
-      console.log('Producto eliminado del carrito exitosamente');
+      // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje al usuario
+      console.log('Producto eliminado del carrito con éxito');
+      Swal.fire(`${productTitle} eliminado con éxito`).then(()=>{
+        setTimeout(() => {
+          location.reload();
+        }, 100);
+      });
     } else {
-      throw new Error('Error al eliminar producto del carrito');
+      // Manejar errores en la respuesta
+      console.error('Error al elimniar el producto del carrito');
     }
-  })
-  .catch((error) => {
+  } catch (error) {
     console.error(error);
-  });
+  }
 }
 
 //Vaciar el carrito
-function vaciarCarrito(cartId) {
+function vaciarCarrito(cartId, user) {
   fetch(`/api/cart/${cartId}`, {
     method: 'DELETE',
   })
   .then((response) => {
     if (response.ok) {
       console.log('Carrito vaciado exitosamente');
+      Swal.fire({
+        html: `<span style="color: #084D68; font-weight: bold;">${user}</span> el carrito <span style="color: #084D68; font-weight: bold;">${cartId}</span> fue vaciado con éxito`,
+      }).then(() => {
+        setTimeout(() => {
+          location.reload();
+        }, 100);
+      });      
     } else {
       throw new Error('Error al vaciar el carrito');
     }
@@ -77,3 +79,49 @@ function vaciarCarrito(cartId) {
     console.error(error);
   });
 }
+
+
+// Obtén todos los elementos que tienen la clase 'total'
+const totalesProductos = document.querySelectorAll('.total');
+
+let totalGeneral = 0;
+
+// Itera sobre todos los elementos que contienen los totales de los productos
+totalesProductos.forEach(celdaTotal => {
+  // Convierte el contenido de cada celda a un número y súmalo al total general
+  totalGeneral += parseFloat(celdaTotal.textContent.replace('$', ''));
+});
+
+
+// Actualiza el elemento HTML donde quieres mostrar el total general
+const totalDeTotales = document.querySelector('.totalDeTotales');
+totalDeTotales.innerHTML = `<h1>TOTAL: $${totalGeneral}</h1>`;
+
+
+window.onload = function () {
+  const products = document.querySelectorAll('.cantidades'); // Obtener todas las celdas de cantidad
+
+  if (products.length === 0) {
+    // Si no hay productos, mostrar el mensaje de carrito vacío
+    const contenedorDescripcion = document.querySelector('.contenedorDescripcion');
+    contenedorDescripcion.innerHTML = `
+    <div class="carritoVacio">
+      <h1>Carrito Vacío</h1>
+      <ul class="menu">
+      <li>
+        <a href="/profile">
+          <span>Volver a la Tienda</span>
+          <span>
+            <i class="bi bi-arrow-bar-left"></i>
+          </span>
+        </a>
+      </li>
+    </ul>
+    </div>
+  `;
+  } else {
+    // Si hay productos, asegurarse de que no se muestre el mensaje de carrito vacío
+    const contenedorDescripcion = document.querySelector('.carritoVacio');
+    contenedorDescripcion.innerHTML = ''; // Limpiar el contenido para ocultar el mensaje
+  }
+};

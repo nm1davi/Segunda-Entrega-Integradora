@@ -1,57 +1,105 @@
-<article>
-      <header>
-            <h1>Te damos la Bienvenida!! 🤝</h1>
-            <p><strong>Nombre:</strong> {{user.first_name}}</p>
-            <p><strong>Apellido:</strong> {{user.last_name}}</p>
-            <p><strong>Email:</strong> {{user.email}}</p>
-            <p><strong>Role:</strong> {{user.role}}</p>
-            <p><strong>Edad:</strong> {{user.age}}</p>
-            <p><strong>Carrito:</strong> {{user.cart}}</p>
-      </header>
+<html lang="en">
 
-      <section id="productsSection">
-            <h2>Productos Disponibles</h2>
-            <table id="productsTable">
-                  <thead>
-                        <tr>
-                              <th scope="col">N°</th>
-                              <th scope="col">Nombre</th>
-                              <th scope="col">Descripción</th>
-                              <th scope="col">Precio</th>
-                              <th scope="col">Imagen</th>
-                              <th scope="col">Código</th>
-                              <th scope="col">Stock</th>
-                              <th scope="col">Categoría</th>
-                              <th scope="col">Estado</th>
-                              <th id="col">ID</th>
-                        </tr>
-                  </thead>
-                  <tbody>
-                        {{#each products}}
-                        <tr>
-                              <th scope="row">{{@index}}</th>
-                              <td>{{this.title}}</td>
-                              <td>{{this.description}}</td>
-                              <td>{{this.price}}</td>
-                              <td>{{this.thumbnail}}</td>
-                              <td>{{this.code}}</td>
-                              <td>{{this.stock}}</td>
-                              <td>{{this.category}}</td>
-                              <td>{{this.status}}</td>
-                              <td>{{this._id}}</td>
-                              <td>
-                                    <button class="boton-carrito" onclick="agregarAlCarrito(this.dataset.cart, '{{this._id}}')" data-cart="{{user.cart}}">+ Carrito</button>
-                              </td>
-                        </tr>
-                        {{/each}}
-                  </tbody>
-            </table>
-      </section>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="stylesheet" type="text/css" href="/css/efectoshoover.css" />
+  <link rel="stylesheet"
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <title>Perfil</title>
+</head>
+<body>
 
-      <footer>
-            <a href="/api/session/logout" role="button">Cerrar Sesión</a>
-            <a href="/api/cart/{{user.cart}}" role="button">Ir al Carrito</a>
-      </footer>
-</article>
-
-<script src="js/carrito.js"></script>
+  <header>
+    <nav class="navegador">
+      <div class="imgLogo">
+        <img src="/img/twitter_header_photo_1.png" alt="Imagen Logo Empresa" />
+      </div>
+      <div class="dropdown">
+  <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+    Bienvenido <i class="bi bi-person-down" style="font-size: 24px; color: red;"></i>
+  </button>
+  <ul class="dropdown-menu">
+    <li><p><strong>Nombre:</strong> {{user.first_name}}</p></li>
+    <li><p><strong>Apellido:</strong> {{user.last_name}}</p></li>
+    <li><p><strong>Email:</strong> {{user.email}}</p></li>
+    <li><p><strong>Role:</strong> {{user.role}}</p></li>
+    <li><p><strong>Edad:</strong> {{user.age}}</p></li>
+    <li><p><strong>Carrito:</strong> {{user.cart}}</p></li>
+    <ul class="menu">
+  <li>
+    <a href="/api/session/logout">
+      <span>Cerrar Sesión</span>
+      <span>
+        <i class="bi bi-box-arrow-right"></i>
+      </span>
+    </a>
+  </li>
+    </ul>
+  </ul>
+</div>
+    </nav>
+  </header>
+  <main>
+      <div class="contenedorTarjetasProductos">
+      {{#each products}}
+      <div class="card" style="width: 18rem;">
+  <img src={{this.thumbnail}} class="card-img-top" alt="Imagenes de los productos">
+  <div class="card-body">
+    <h5 class="card-title">{{this.title}}</h5>
+    <p class="card-text">{{this.description}}</p>
+  </div>
+  <ul class="list-group list-group-flush">
+    <li class ="list-group-item"><strong>Precio:</strong> {{this.price}}</li>
+    <li class="list-group-item"><strong>Codigo:</strong> {{this.code}}</li>
+    <li class="list-group-item"><strong>Stock:</strong> {{this.stock}}</li>
+    <li class="list-group-item"><strong>Categoría:</strong> {{this.category}}</li>
+    <li class="list-group-item"><strong>Estado:</strong> {{this.status}}</li>
+    <li class="list-group-item"><strong>Id Producto:</strong> {{this._id}}</li>
+  </ul>
+  <div class="card-body">
+        <ul class="menu">
+  <li>
+            <button class="boton-carrito" onclick="agregarAlCarrito('{{../user.cart}}', '{{this._id}}', '{{this.title}}')" data-hover="AGREGAR AL CARRITO" >
+              <div><span class="material-symbols-outlined">
+                  <i class="bi bi-cart-plus-fill"></i>
+                </span></div>
+            </button>
+  </li>
+    </ul>
+        <ul class="menu">
+  <li>
+    <a href="/api/cart/{{../user.cart}}">
+      <span>Ir al Carrito</span>
+      <span>
+       <i class="bi bi-cart-fill"></i>
+      </span>
+    </a>
+  </li>
+    </ul>
+  </div>
+</div>
+{{/each}}
+      </div>
+  </main>
+  <footer>
+    <nav class="navegador">
+      <div class="textoFooter">
+        <h2>
+          Proyecto Backend Nicolas Davi ©
+        </h2>
+      </div>
+      <div class="iconosFooter">
+        <i class="bi bi-twitter-x"></i>
+        <i class="bi bi-instagram"></i>
+        <i class="bi bi-facebook"></i>
+        <i class="bi bi-whatsapp"></i>
+      </div>
+    </nav>
+  </footer>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <script src="/js/profile.js"></script>
+</body>
+</html>
