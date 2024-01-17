@@ -1,9 +1,9 @@
 import { Router } from "express";
-import UserModel from "../models/user.model.js";
+import UserModel from "../dao/models/user.model.js";
 import {createHash, isValidPassword} from '../utils.js'
 import passport from "passport";
 const router = Router();
-import Cart from '../models/cart.model.js';
+import Cart from '../dao/models/cart.model.js';
 
 //Para loguear una persona
 router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '/login'}) , async (req, res) => {

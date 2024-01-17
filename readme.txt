@@ -10,4 +10,5 @@ Estrategia de autenticación por terceros + JWT (con GitHub) ✔
 Passport Avanzado ✔
 Ruteo avanzado y estrategias avanzadas de autorización ✔
 Dotenv ✔
-Controllers (Agregar controllers a passport en la parte de Register) ✔
+Controllers ✔
+DAO ✔

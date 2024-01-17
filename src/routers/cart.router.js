@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import Cart from '../models/cart.model.js';
-import Producto from '../models/product.model.js';
+import Cart from '../dao/models/cart.model.js';
+import Producto from '../dao/models/product.model.js';
 import CartController from '../controllers/carts.controllers.js';
 
 import Handlebars from 'handlebars';
@@ -32,7 +32,7 @@ router.get('/:cid', myMiddleware, async (req, res) => {
     res.render('cart', {
       title: "Carrito",
       cartId: cartInfo._id,
-      user: cartInfo.user,
+      user: req.user.toJSON(),
       products: cartInfo.products,
     });
   } catch (error) {

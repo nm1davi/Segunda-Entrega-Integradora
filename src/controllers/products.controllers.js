@@ -1,20 +1,9 @@
-import productModel from "../models/product.model.js";
+import ProductsService from "../services/product.service.js";
 
 export default class ProuctsController{
-      static async getAll(){
+      static async getAll(filters = {}, opts = {}){
                 // Obtener productos
-    const productos = await productModel.find({}).sort({"title": 1});
-    const formattedProducts = productos.map(product => ({
-      _id: product._id,
-      title: product.title,
-      description: product.description,
-      price: product.price,
-      thumbnail: product.thumbnail,
-      code: product.code,
-      stock: product.stock,
-      category: product.category,
-      status: product.status
-    }))
-    return formattedProducts;
+    const productos = await ProductsService.getAll(filters, opts);
+    return productos;
       };
 }
