@@ -249,6 +249,10 @@ router.post('/:cid/purchase', async (req, res) => {
     if (!cart) {
       return res.status(404).json({ error: 'Carrito no encontrado' });
     }
+    const pricesInCart = cart.productos.map(item => ({
+      productId: item.product._id,
+      price: item.product.price,
+    }));
 
     // Verificar el stock y realizar la compra
     const productsToPurchase = [];
@@ -286,20 +290,22 @@ router.post('/:cid/purchase', async (req, res) => {
         cart: productsNotPurchasedInfo,
       });
     }
-
+    
     // Crear un ticket solo con los productos comprados
     const email = user.email;
+
     const ticketData = {
       code: generateTicketCode(),
-      amount: calculateTotalAmount(productsToPurchase),
+      amount: calculateTotalAmount(productsToPurchase, pricesInCart),
       purchaser: email,
       products: productsToPurchase.map(item => ({
         product: item.product,
         quantity: item.quantity,
+        price: pricesInCart.find(p => p.productId.equals(item.product)).price
       })),
     };
     const ticket = await TicketsService.create(ticketData);
-    console.log('Productos en el ticket:', productsToPurchase);
+
     res.status(201).json({
       message: 'Compra realizada con éxito',
       ticket,
@@ -322,9 +328,9 @@ function generateTicketCode() {
 
 
 // Función para calcular el monto total de la compra
-function calculateTotalAmount(products) {
+function calculateTotalAmount(products, pricesInCart) {
   return products.reduce((total, item) => {
-    const productPrice = item.product.price;
+    const productPrice = pricesInCart.find(p => p.productId.equals(item.product)).price;
     const quantity = item.quantity;
 
     // Verificar si tanto el precio como la cantidad son números antes de sumarlo al total
@@ -337,6 +343,7 @@ function calculateTotalAmount(products) {
     }
   }, 0);
 }
+
 
 
 
