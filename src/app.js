@@ -8,6 +8,9 @@ import MongoStore from 'connect-mongo';
 import indexRouter from './routers/index.router.js';
 import sessionsRouter from './routers/sessions.router.js';
 import cartRouter from './routers/cart.router.js';
+import productRouter from './routers/product.router.js';
+import notificationRouter from './routers/notifications.router.js';
+
 
 import { __dirname } from './utils.js';
 import { URI } from './db/mongodb.js';
@@ -44,6 +47,8 @@ app.use(passport.session())
 app.use('/', indexRouter);
 app.use('/api', sessionsRouter);
 app.use('/api/cart', cartRouter);
+app.use('/api/product', productRouter);
+app.use('/api/notification', notificationRouter);
 
 app.use((error, req, res, next) => {
   const message = `Ah ocurrido un error desconocido 😨: ${error.message}`;

@@ -125,3 +125,43 @@ window.onload = function () {
     contenedorDescripcion.innerHTML = ''; // Limpiar el contenido para ocultar el mensaje
   }
 };
+
+document.getElementById('pagarBtn').addEventListener('click', async () => {
+  try {
+    const cartId = event.currentTarget.dataset.cartId;
+    const response = await fetch(`/api/cart/${cartId}/purchase`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (response.ok) {
+      console.log('Su pago ha sido exitoso');
+      Swal.fire('Su pago ha sido exitoso').then(() => {
+        setTimeout(() => {
+          location.reload();
+        }, 100);
+      });
+      const data = await response.json();
+      console.log(data);
+      // redirigir a una página de confirmación o realizar otras acciones
+    } else {
+      const errorData = await response.json();
+      console.error('Error al realizar el pago:', errorData);
+      Swal.fire('Error al realizar el pago').then(() => {
+        setTimeout(() => {
+          location.reload();
+        }, 100);
+      });
+    }
+  } catch (error) {
+    console.error('Error de red:', error);
+    Swal.fire('Error al realizar el pago').then(() => {
+      setTimeout(() => {
+        location.reload();
+      }, 100);
+    });
+  }
+});
+

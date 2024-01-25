@@ -34,6 +34,11 @@ header{
     margin-right: 1rem;
 }
 
+.btnContacto{
+  color: white !important;
+  text-decoration: none !important;
+}
+
 /* Estilos de main */
 main{
     width: 100%;
@@ -315,4 +320,12 @@ td{
 }
 .carritoVacio a{
   text-decoration: none;
+}
+
+/* Estilo del admin */
+.mainAdmin{
+  margin: 1rem;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
 }

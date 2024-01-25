@@ -28,6 +28,7 @@ function typeRecoveryPassword() {
   }
 }
 
+
   // Obtener referencias a los botones
   const btnIngresar = document.getElementById('btnIngresar');
   const btnRegistrarse = document.getElementById('btnRegistrarse');

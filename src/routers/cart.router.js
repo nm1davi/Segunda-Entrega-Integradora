@@ -1,14 +1,37 @@
 import { Router } from 'express';
+
 import Cart from '../dao/models/cart.model.js';
 import Producto from '../dao/models/product.model.js';
-import CartController from '../controllers/carts.controllers.js';
+import userModel from '../dao/models/user.model.js';
 
+import TicketsService from '../services/ticket.service.js';
+
+import CartController from '../controllers/carts.controllers.js';
+import ProductsController from '../controllers/products.controllers.js';
+
+import { v4 as uuidv4 } from 'uuid';
 import Handlebars from 'handlebars';
 
 
 
 
 const router = Router();
+
+// Middleware para verificar si un carrito existe
+const checkCartExists = async (req, res, next) => {
+  const { cid } = req.params;
+  try {
+    const cart = await Cart.findById(cid);
+    if (!cart) {
+      return res.status(404).json({ error: 'Carrito no encontrado' });
+    }
+    req.cart = cart;
+    next();
+  } catch (error) {
+    console.error('Error: ', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+};
 
 const myMiddleware = (req, res, next) => {
   console.log("Se ha recibido una nueva solicitud de Carrito");
@@ -109,21 +132,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
 
 
-// Middleware para verificar si un carrito existe
-const checkCartExists = async (req, res, next) => {
-  const { cid } = req.params;
-  try {
-    const cart = await Cart.findById(cid);
-    if (!cart) {
-      return res.status(404).json({ error: 'Carrito no encontrado' });
-    }
-    req.cart = cart;
-    next();
-  } catch (error) {
-    console.error('Error: ', error);
-    res.status(500).json({ error: 'Error interno del servidor' });
-  }
-};
+
 
 // Eliminar una unidad del producto específico del carrito
 router.delete('/:cid/product/:pid', checkCartExists, async (req, res) => {
@@ -224,5 +233,111 @@ router.delete('/:cid', checkCartExists, async (req, res) => {
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
+
+// // Ruta para finalizar el proceso de compra del carrito
+router.post('/:cid/purchase', async (req, res) => {
+  const { cid } = req.params;
+  try {
+    // Obtener el usuario con su carrito (si existe la relación)
+    const user = await userModel.findOne({ cart: cid }).populate('cart');
+    
+    if (!user || !user.cart) {
+      return res.status(404).json({ error: 'Carrito no encontrado' });
+    }
+    const cart = await Cart.findById(cid).populate('productos.product');
+
+    if (!cart) {
+      return res.status(404).json({ error: 'Carrito no encontrado' });
+    }
+
+    // Verificar el stock y realizar la compra
+    const productsToPurchase = [];
+    const productsNotPurchased = [];
+
+    for (const item of cart.productos) {
+      const product = item.product;
+      const requestedQuantity = item.quantity;
+
+      // Verificar si hay suficiente stock para la cantidad solicitada
+      if (product.stock >= requestedQuantity) {
+        // Actualizar el stock del producto
+        await ProductsController.updateStockById(product._id, product.stock - requestedQuantity);
+
+        // Agregar el producto a la lista de productos a comprar
+        productsToPurchase.push({
+          product: product._id,
+          quantity: requestedQuantity
+        });
+      } else {
+        productsNotPurchased.push(product._id);
+      }
+    }
+
+    // Filtrar los productos no comprados
+    const productsNotPurchasedInfo = cart.productos.filter(item => productsNotPurchased.includes(item.product._id));
+
+    // Guardar los productos no comprados en el carrito
+    cart.productos = productsNotPurchasedInfo;
+    await cart.save();
+    
+    if (productsToPurchase.length === 0) {
+      return res.status(400).json({
+        error: 'Todos los productos en el carrito están fuera de stock',
+        cart: productsNotPurchasedInfo,
+      });
+    }
+
+    // Crear un ticket solo con los productos comprados
+    const email = user.email;
+    const ticketData = {
+      code: generateTicketCode(),
+      amount: calculateTotalAmount(productsToPurchase),
+      purchaser: email,
+      products: productsToPurchase.map(item => ({
+        product: item.product,
+        quantity: item.quantity,
+      })),
+    };
+    const ticket = await TicketsService.create(ticketData);
+    console.log('Productos en el ticket:', productsToPurchase);
+    res.status(201).json({
+      message: 'Compra realizada con éxito',
+      ticket,
+      productsNotPurchased: productsNotPurchasedInfo,
+    });
+  } catch (error) {
+    console.error('Error: ', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+
+
+
+
+// Función para generar un código de ticket (puedes implementar tu propia lógica)
+function generateTicketCode() {
+    const uuid = uuidv4().replace(/-/g, '');
+    return uuid.substr(0, 10).toUpperCase();
+}
+
+
+// Función para calcular el monto total de la compra
+function calculateTotalAmount(products) {
+  return products.reduce((total, item) => {
+    const productPrice = item.product.price;
+    const quantity = item.quantity;
+
+    // Verificar si tanto el precio como la cantidad son números antes de sumarlo al total
+    if (typeof productPrice === 'number' && typeof quantity === 'number') {
+      return total + (productPrice * quantity);
+    } else {
+      console.error('Error: El precio o la cantidad del producto no son números', item.product);
+      console.log(`productPrice: ${productPrice}, quantity: ${quantity}`);
+      return total;
+    }
+  }, 0);
+}
+
+
 
 export default router;

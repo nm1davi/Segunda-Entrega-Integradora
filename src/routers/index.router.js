@@ -1,8 +1,29 @@
 import { Router } from 'express';
 import userModel from '../dao/models/user.model.js'
 import ProductsController from '../controllers/products.controllers.js'
+import { UserDTO } from '../dto/user.dto.js';
 
 const router = Router();
+
+//MIDLEWARES 
+const authorizeAdmin = (req, res, next) => {
+  const user = req.user;
+
+  if (!user || user.role !== 'admin') {
+    return res.status(403).json({ message: 'No tienes permisos de administrador' });
+  }
+  next();
+};
+
+const authorizeUser = (req, res, next) => {
+  const user = req.user;
+
+  if (!user || user.role !== 'user') {
+    return res.status(403).json({ message: 'No tienes permisos de usuario' });
+  }
+  next();
+};
+
 
 //GET INICIO
 router.get('/', async (req, res) => {
@@ -26,9 +47,9 @@ router.get('/', async (req, res) => {
       throw new Error('Error al obtener el carrito del usuario: ' + error.message);
     }
   }
-  
-//GET DE PROFILE
-router.get('/profile', async (req, res) => {
+
+  //GET DE PROFILE USER
+router.get('/profile', authorizeUser , async (req, res) => {
   if(!req.user){
     return res.redirect('login');
   }
@@ -37,19 +58,70 @@ router.get('/profile', async (req, res) => {
     const productos = await ProductsController.getAll();
 
     // Obtener información del carrito del usuario desde la base de datos
-    const userCart = await obtenerCarritoDelUsuario(req.user._id); // Suponiendo una función ficticia para obtener el carrito
-
-    // Renderizar la vista 'profile' y pasar datos a la plantilla
+    const userCart = await obtenerCarritoDelUsuario(req.user._id); 
+    const userDTO = new UserDTO(req.user);
+    
     res.render('profile', {
       title: 'Profile ✅',
-      user: req.user.toJSON(),
+      user: userDTO,
       products: productos,
-      cart: userCart // Pasar la información del carrito a la vista
+      cart: userCart 
     });
   } catch (error) {
     console.error('Error al obtener información para el perfil:', error);
     res.render('error', { title: 'Error ❌', messageError: 'Error al obtener información para el perfil' });
   }
+});
+
+router.get('/contact', authorizeUser , async (req, res) => {
+  if(!req.user){
+    return res.redirect('login');
+  }
+  try {
+
+    const userDTO = new UserDTO(req.user);
+    
+    res.render('contact', {
+      title: 'Conctact ✅',
+      user: userDTO,
+    });
+  } catch (error) {
+    console.error('Error al obtener información para el perfil:', error);
+    res.render('error', { title: 'Error ❌', messageError: 'Error al obtener información para el perfil' });
+  }
+});
+
+  //GET DE ADMIN PROFILE
+router.get('/admin', authorizeAdmin, async (req, res) => {
+  const userDTO = new UserDTO(req.user);
+  res.render('adminProfile', {
+    title: 'Admin ✅',
+    user: userDTO,
+  });
+});
+  //GET DE ADD PRODUCT
+router.get('/admin/addProduct', authorizeAdmin, async (req, res) => {
+  const userDTO = new UserDTO(req.user);
+  res.render('addProduct', {
+    title: 'Admin ✅',
+    user: userDTO,
+  });
+});
+  //GET DE DELETE PRODUCT
+router.get('/admin/deleteProduct', authorizeAdmin, async (req, res) => {
+  const userDTO = new UserDTO(req.user);
+  res.render('deleteProduct', {
+    title: 'Admin ✅',
+    user: userDTO,
+  });
+});
+  //GET DE UPDATE PRODUCT
+router.get('/admin/updateProduct', authorizeAdmin, async (req, res) => {
+  const userDTO = new UserDTO(req.user);
+  res.render('updateProduct', {
+    title: 'Admin ✅',
+    user: userDTO,
+  });
 });
 
 //GET DE LOGIN

@@ -16,4 +16,35 @@ export default class ProductDao {
         }))
         return formattedProducts;
     }
+    
+    async getById(pid) {
+      try {
+          const product = await productModel.findById(pid);
+          return product;
+      } catch (error) {
+          throw new Error(`Error fetching product with ID ${pid}: ${error.message}`);
+      }
+  }
+
+    async create(data) {
+      return productModel.create(data);
+    }
+    
+    async updateById(pid, data) {
+      try {
+          const result = await productModel.findByIdAndUpdate(pid, { $set: data }, { new: true });
+          return result;
+      } catch (error) {
+          throw new Error(`Error updating product with ID ${pid}: ${error.message}`);
+      }
+  }
+  
+    async deleteById(pid) {
+      try {
+        const result = await productModel.findByIdAndDelete(pid);
+        return result;
+      } catch (error) {
+        throw new Error(`Error deleting product with ID ${pid}: ${error.message}`);
+      }
+    }
 }

@@ -19,13 +19,22 @@ router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '
           // Guarda los cambios en el usuario para agregar la referencia al carrito
           await req.user.save();
         }
-    
-        // Redirecciona al perfil u otra página después de iniciar sesión
-        res.redirect("/profile");
-      } catch (error) {
-        console.error('Error al iniciar sesión:', error);
-        res.status(500).send('Error interno del servidor');
-      }
+        req.session.userRole = req.user.role;
+        const userRole = req.user.role;
+
+    // Redirecciona de acuerdo al rol del usuario
+    if (userRole === 'admin') {
+      res.redirect("/admin");
+    } else if (userRole === 'user') {
+      res.redirect("/profile");
+    } else {
+      // Puedes manejar otros roles o situaciones según sea necesario
+      res.status(403).send("Acceso no autorizado");
+    }
+  } catch (error) {
+    console.error("Error al iniciar sesión:", error);
+    res.status(500).send("Error interno del servidor");
+  }
     });
     
 
