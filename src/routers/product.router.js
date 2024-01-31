@@ -60,7 +60,7 @@ router.post('/', upload.single('thumbnail'), async (req, res, next) => {
 //Ruta para ver mockingproducts
 router.get('/mockingproducts', async (req, res) => {
   const products = [];
-  for (let index = 0; index < 100; index++) {
+  for (let index = 0; index < 50; index++) {
     products.push(generateProduct());
   }
   res.render('mockingproducts', {
