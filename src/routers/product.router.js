@@ -2,6 +2,11 @@ import { Router } from 'express';
 import multer from 'multer';
 import path from 'path';
 import ProductsController from '../controllers/products.controllers.js';
+import { generateProduct } from '../utils/utils.js';
+import { generatorProductError } from '../utils/causeMessageError.js';
+import {customError} from '../utils/customError.js';
+import enumsError from '../utils/enumsError.js';
+
 
 const router = Router();
 
@@ -20,24 +25,50 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 // Ruta para crear un producto
-router.post('/', upload.single('thumbnail'), async (req, res) => {
+router.post('/', upload.single('thumbnail'), async (req, res, next) => {
   try {
     const { body, file } = req;
-    
-    // Si se proporciona un archivo, utiliza la ruta del archivo
-    const thumbnail = file ? `/uploads/${file.filename}` : '';
-
-    // Agrega la ruta del archivo a los datos del producto
-    const productData = { ...body, thumbnail };
-
-    const product = await ProductsController.create(productData);
-    res.status(201).json(product);
+    const { 
+      title,
+      description,
+      price,
+      code,
+      stock,
+      category,
+      status } = body;
+      if (   
+        !title || !description || !price || !code || !stock || !category || status === undefined ){
+          const errorMessage = generatorProductError(body);
+          customError.create({
+            name : 'Invalid data Product',
+            cause: errorMessage,
+            message: 'Ocurrio un error mientras se intenta agregar un Producto ❌',
+            code: enumsError.INVALID_PARAMS_ERROR,
+          });
+        }
+          const thumbnail = file ? `/uploads/${file.filename}` : '';
+          // Agrega la ruta del archivo a los datos del producto
+          const productData = { ...body, thumbnail };
+          const product = await ProductsController.create(productData);
+          res.status(201).json(product);
+          // Si se proporciona un archivo, utiliza la ruta del archivo
   } catch (error) {
-    console.error("Error: ", error.message);
-    res.status(500).json({ error: 'Internal Server Error' });
+    next(error);
   }
 });
     
+//Ruta para ver mockingproducts
+router.get('/mockingproducts', async (req, res) => {
+  const products = [];
+  for (let index = 0; index < 100; index++) {
+    products.push(generateProduct());
+  }
+  res.render('mockingproducts', {
+    title: 'Mockingproducts ✅',
+    products: products
+  });
+});
+
 // Ruta para actualizar un producto
 router.put('/:productId', upload.single('thumbnail'), async (req, res) => {
   try {

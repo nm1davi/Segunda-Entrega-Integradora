@@ -1,5 +1,4 @@
 import { ProductDTO } from "../dto/product.dto.js";
-
 export default class ProductRepository {
       constructor (dao){
             this.dao = dao;
@@ -16,7 +15,7 @@ export default class ProductRepository {
                   status
             } = data;
             const dataDao = {
-                  title,
+                  title,  
                   description,
                   price,
                   thumbnail,

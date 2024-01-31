@@ -11,8 +11,8 @@ import cartRouter from './routers/cart.router.js';
 import productRouter from './routers/product.router.js';
 import notificationRouter from './routers/notifications.router.js';
 
-
-import { __dirname } from './utils.js';
+import { errorHandlerMiddleware} from './middlewares/errorHandlerMiddleware.js'
+import { __dirname } from './utils/utils.js';
 import { URI } from './db/mongodb.js';
 import { init as initPassport} from './config/passport.config.js'
 
@@ -35,9 +35,9 @@ app.use(sessions({
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(express.static(path.join(__dirname, '../public')));
+app.use(express.static(path.join(__dirname, '../../public')));
 app.engine('handlebars', handlebars.engine());
-app.set('views', path.join(__dirname, 'views'));
+app.set('views', path.join(__dirname, '..', 'views'));
 app.set('view engine', 'handlebars');
 
 initPassport();
@@ -50,11 +50,6 @@ app.use('/api/cart', cartRouter);
 app.use('/api/product', productRouter);
 app.use('/api/notification', notificationRouter);
 
-app.use((error, req, res, next) => {
-  const message = `Ah ocurrido un error desconocido 😨: ${error.message}`;
-  console.log(message);
-  res.status(500).json({ status: 'error', message });
-});
-
+app.use(errorHandlerMiddleware);
 
 export default app;

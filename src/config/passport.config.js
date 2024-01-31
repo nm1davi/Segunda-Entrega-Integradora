@@ -2,7 +2,7 @@ import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 import {Strategy as GithubStrategy} from 'passport-github2'
 import UserModel from "../dao/models/user.model.js";
-import {createHash, isValidPassword} from '../utils.js'
+import {createHash, isValidPassword} from '../utils/utils.js'
 
 //Vamos a confiugar el passport
 export const init = () => {

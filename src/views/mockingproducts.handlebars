@@ -1,5 +1,4 @@
 <html lang="en">
-
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -16,35 +15,9 @@
       <div class="imgLogo">
         <img src="/img/twitter_header_photo_1.png" alt="Imagen Logo Empresa" />
       </div>
-      <div class="dropdown">
-  <button class="btn btn-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false">
-    Bienvenido <i class="bi bi-person-down"></i>
-  </button>
-  <ul class="dropdown-menu">
-    <li><p><strong>Nombre:</strong> {{user.firstName}}</p></li>
-    <li><p><strong>Apellido:</strong> {{user.lastName}}</p></li>
-    <li><p><strong>Email:</strong> {{user.email}}</p></li>
-    <li><p><strong>Role:</strong> {{user.role}}</p></li>
-    <li><p><strong>Edad:</strong> {{user.age}}</p></li>
-    <li><p><strong>Carrito:</strong> {{user.cart}}</p></li>
-    <ul class="menu">
-  <li>
-    <a href="/api/session/logout">
-      <span>Cerrar Sesión</span>
-      <span>
-        <i class="bi bi-box-arrow-right"></i>
-      </span>
-    </a>
-  </li>
-    </ul>
-  </ul>
   <button class="btn btn-secondary" type="button">
-    <a class="btnContacto" href="/contact">Contacto <i class="bi bi-person-lines-fill"></i></a>
+    <a class="btnContacto" href="/profile"><i class="bi bi-arrow-left-square-fill"></i> Volver</a>
   </button>
-  <button class="btn btn-secondary" type="button">
-    <a class="btnContacto" href="/api/product/mockingproducts">Mockingproducts <i class="bi bi-qr-code"></i></a>
-  </button>
-</div>
     </nav>
   </header>
   <main>
@@ -62,27 +35,10 @@
     <li class="list-group-item"><strong>Stock:</strong> {{this.stock}}</li>
     <li class="list-group-item"><strong>Categoría:</strong> {{this.category}}</li>
     <li class="list-group-item"><strong>Estado:</strong> {{this.status}}</li>
-    <li class="list-group-item"><strong>Id Producto:</strong> {{this._id}}</li>
+    <li class="list-group-item"><strong>Id Producto:</strong> {{this.id}}</li>
   </ul>
   <div class="card-body">
         <ul class="menu">
-  <li>
-            <button class="boton-carrito" onclick="agregarAlCarrito('{{../user.cart}}', '{{this._id}}', '{{this.title}}')" data-hover="AGREGAR AL CARRITO" >
-              <div><span class="material-symbols-outlined">
-                  <i class="bi bi-cart-plus-fill"></i>
-                </span></div>
-            </button>
-  </li>
-    </ul>
-        <ul class="menu">
-  <li>
-    <a href="/api/cart/{{../user.cart}}">
-      <span>Ir al Carrito</span>
-      <span>
-       <i class="bi bi-cart-fill"></i>
-      </span>
-    </a>
-  </li>
     </ul>
   </div>
 </div>

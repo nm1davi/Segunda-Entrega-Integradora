@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import path from 'path';
 import EmailService from '../services/email.service.js';
-import { __dirname } from '../utils.js';
+import { __dirname } from '../utils/utils.js';
 
 const router = Router();
 
