@@ -4,6 +4,7 @@ import {createHash, isValidPassword} from '../utils/utils.js'
 import passport from "passport";
 const router = Router();
 import Cart from '../dao/models/cart.model.js';
+import { logger } from "../config/logger.js";
 
 //Para loguear una persona
 router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '/login'}) , async (req, res) => {
@@ -32,7 +33,7 @@ router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '
       res.status(403).send("Acceso no autorizado");
     }
   } catch (error) {
-    console.error("Error al iniciar sesión:", error);
+      logger.error("Error al iniciar sesión:", error);
     res.status(500).send("Error interno del servidor");
   }
     });

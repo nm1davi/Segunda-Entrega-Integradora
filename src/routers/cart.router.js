@@ -8,6 +8,7 @@ import TicketsService from '../services/ticket.service.js';
 
 import CartController from '../controllers/carts.controllers.js';
 import ProductsController from '../controllers/products.controllers.js';
+import { logger } from '../config/logger.js';
 
 import { v4 as uuidv4 } from 'uuid';
 import Handlebars from 'handlebars';
@@ -28,13 +29,13 @@ const checkCartExists = async (req, res, next) => {
     req.cart = cart;
     next();
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 };
 
 const myMiddleware = (req, res, next) => {
-  console.log("Se ha recibido una nueva solicitud de Carrito");
+  logger.info("Se ha recibido una nueva solicitud de Carrito");
   next();
 };
 Handlebars.registerHelper('multiply', function(a, b) {
@@ -59,7 +60,7 @@ router.get('/:cid', myMiddleware, async (req, res) => {
       products: cartInfo.products,
     });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -71,7 +72,7 @@ router.post('/', async (req, res) => {
     const newCart = await Cart.create({ productos: [] });
     res.status(201).json({ message: 'Nuevo carrito creado', cartId: newCart._id });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -125,7 +126,7 @@ router.post('/:cid/product/:pid', async (req, res) => {
 
     res.status(201).json({ message: 'Producto agregado al carrito con éxito', cart: updatedCart });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -153,7 +154,7 @@ router.delete('/:cid/product/:pid', checkCartExists, async (req, res) => {
     await cart.save();
     res.status(200).json({ message: 'Se eliminó una unidad del producto del carrito', cart });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -181,7 +182,7 @@ router.put('/:cid/products/:pid', checkCartExists, async (req, res) => {
       return res.status(400).json({ error: 'Cantidad no proporcionada correctamente' });
     }
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -215,7 +216,7 @@ router.put('/:cid', checkCartExists, async (req, res) => {
 
     res.status(200).json({ message: 'Carrito actualizado con éxito', cart: updatedCart });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -229,7 +230,7 @@ router.delete('/:cid', checkCartExists, async (req, res) => {
     await cart.save();
     res.status(200).json({ message: 'Todos los productos del carrito han sido eliminados' });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -312,7 +313,7 @@ router.post('/:cid/purchase', async (req, res) => {
       productsNotPurchased: productsNotPurchasedInfo,
     });
   } catch (error) {
-    console.error('Error: ', error);
+    logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
   }
 });
@@ -338,7 +339,7 @@ function calculateTotalAmount(products, pricesInCart) {
       return total + (productPrice * quantity);
     } else {
       console.error('Error: El precio o la cantidad del producto no son números', item.product);
-      console.log(`productPrice: ${productPrice}, quantity: ${quantity}`);
+      logger.error(`productPrice: ${productPrice}, quantity: ${quantity}`);
       return total;
     }
   }, 0);

@@ -2,6 +2,7 @@ import { Router } from 'express';
 import userModel from '../dao/models/user.model.js'
 import ProductsController from '../controllers/products.controllers.js'
 import { UserDTO } from '../dto/user.dto.js';
+import { logger } from '../config/logger.js';
 
 const router = Router();
 
@@ -24,13 +25,22 @@ const authorizeUser = (req, res, next) => {
   next();
 };
 
-
+// GET LOGGER
+router.get('/loggerTest', (req, res) => {
+  req.logger.debug('Hola desde el request index home 😁 (debug)');
+  req.logger.http('Hola desde el request index home 😁 (http)');
+  req.logger.info('Hola desde el request index home 😁 (info)');
+  req.logger.warning('Hola desde el request index home 😁 (warning)');
+  req.logger.error('Hola desde el request index home 😁 (error)');
+  req.logger.fatal('Hola desde el request index home 😁 (fatal)');
+  res.send('Hello Coder House 🖐️');
+});
 //GET INICIO
 router.get('/', async (req, res) => {
   try {
     res.render('index',{ title: 'Inicio',})
   } catch (error) {
-    console.error('Error:', error);
+    logger.error('Error:', error);
     res.render('error', { title: 'Error ❌', messageError: 'Error' });
   }
   });
@@ -68,7 +78,7 @@ router.get('/profile', authorizeUser , async (req, res) => {
       cart: userCart 
     });
   } catch (error) {
-    console.error('Error al obtener información para el perfil:', error);
+    logger.error('Error al obtener información para el perfil:', error);
     res.render('error', { title: 'Error ❌', messageError: 'Error al obtener información para el perfil' });
   }
 });
@@ -86,7 +96,7 @@ router.get('/contact', authorizeUser , async (req, res) => {
       user: userDTO,
     });
   } catch (error) {
-    console.error('Error al obtener información para el perfil:', error);
+    logger.error('Error al obtener información para el perfil:', error);
     res.render('error', { title: 'Error ❌', messageError: 'Error al obtener información para el perfil' });
   }
 });

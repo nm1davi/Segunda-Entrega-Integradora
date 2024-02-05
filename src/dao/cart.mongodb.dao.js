@@ -1,4 +1,5 @@
 import cartModel from "./models/cart.model.js";
+import { logger } from "../config/logger.js";
 
 export default class CartDao {
   async getById(cartId) {
@@ -25,13 +26,13 @@ export default class CartDao {
               quantity: item.quantity
             };
           } else {
-            console.error('Producto sin _id:', item.product);
+            logger.error('Producto sin _id:', item.product);
             return null; // Puedes manejar el caso donde no hay _id
           }
         }).filter(product => product !== null) // Filtra productos nulos, si los hay
       };
     } catch (error) {
-      console.error('Error al obtener información del carrito:', error);
+      logger.error('Error al obtener información del carrito:', error);
       throw new Error('Error interno al obtener información del carrito');
     }
   }

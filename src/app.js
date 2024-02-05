@@ -15,12 +15,14 @@ import { errorHandlerMiddleware} from './middlewares/errorHandlerMiddleware.js'
 import { __dirname } from './utils/utils.js';
 import { URI } from './db/mongodb.js';
 import { init as initPassport} from './config/passport.config.js'
+import { addLogger } from './config/logger.js';
 
 const app = express();
 
 const SESSION_SECRET = '|7@3BBY5jH:@zFQIg_v47HkKP5S#p&Uc';
 
 
+app.use(addLogger);
 
 app.use(sessions({
   store: MongoStore.create({

@@ -6,7 +6,7 @@ import { generateProduct } from '../utils/utils.js';
 import { generatorProductError } from '../utils/causeMessageError.js';
 import {customError} from '../utils/customError.js';
 import enumsError from '../utils/enumsError.js';
-
+import { logger } from '../config/logger.js';
 
 const router = Router();
 
@@ -83,7 +83,7 @@ router.put('/:productId', upload.single('thumbnail'), async (req, res) => {
     await ProductsController.updateById(productId, productData);
     res.status(200).json({ message: 'Product updated successfully' });
   } catch (error) {
-    console.error("Error: ", error.message);
+    logger.error("Error: ", error.message);
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
@@ -96,7 +96,7 @@ router.put('/:productId', upload.single('thumbnail'), async (req, res) => {
         await ProductsController.deleteById(productId);
         res.status(204).json({message: 'Product deleted successfully'});
       } catch (error) {
-        console.error("Error: ", error.message);
+        logger.error("Error: ", error.message);
         res.status(500).json({ error: 'Internal Server Error' });
       }
     });

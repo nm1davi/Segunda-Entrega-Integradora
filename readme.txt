@@ -25,3 +25,5 @@ Se intentará crear un producto con todos los datos válidos, el producto debe c
 Se intentará crear un un producto  con todos los campos menos el título y el precio, los cuales deberían ser requeridos, por lo tanto, se debe
 recibir un error customizado, en consola debe aparecer una lista de las propiedades requeridas y los tipos (como visto en clase) para reconocer
 en qué propiedades no se enviaron los datos.) ✔
+IMPLEMENTACION DE LOGGER  ✔
+

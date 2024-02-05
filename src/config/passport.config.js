@@ -3,6 +3,7 @@ import { Strategy as LocalStrategy } from "passport-local";
 import {Strategy as GithubStrategy} from 'passport-github2'
 import UserModel from "../dao/models/user.model.js";
 import {createHash, isValidPassword} from '../utils/utils.js'
+import { logger } from "./logger.js";
 
 //Vamos a confiugar el passport
 export const init = () => {
@@ -33,10 +34,12 @@ export const init = () => {
       passport.use('login', new LocalStrategy({usernameField: 'email'}, async(email, password, done)=>{
             const user = await UserModel.findOne({ email});
             if(!user) {
+                  logger.error('Correo o Contraseña invalidos.');
                   return done(new Error('Correo o Contraseña invalidos.'));
             }
             const isNotValidPass = !isValidPassword(password, user)
             if(isNotValidPass) {
+                  logger.error('Correo o Contraseña invalidos.');
                   return done(new Error('Correo o Contraseña invalidos.'));
             }
             done(null, user);
