@@ -124,6 +124,10 @@ main{
 .card-text{
   color: #000000 !important;
 }
+.stock-value {
+  font-weight: bold;
+  font-size: 1.2rem;
+}
 /* Estilos Footer */
 
 footer{

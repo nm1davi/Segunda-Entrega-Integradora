@@ -52,7 +52,6 @@ router.get('/:cid', myMiddleware, async (req, res) => {
     if (!cartInfo) {
       return res.status(404).json({ error: 'Carrito no encontrado' });
     }
-
     res.render('cart', {
       title: "Carrito",
       cartId: cartInfo._id,

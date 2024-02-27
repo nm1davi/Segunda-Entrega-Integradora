@@ -126,7 +126,7 @@ window.onload = function () {
   }
 };
 
-document.getElementById('pagarBtn').addEventListener('click', async () => {
+document.getElementById('pagarBtn').addEventListener('click', async (event) => {
   try {
     const cartId = event.currentTarget.dataset.cartId;
     const response = await fetch(`/api/cart/${cartId}/purchase`, {

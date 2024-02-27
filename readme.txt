@@ -26,4 +26,10 @@ Se intentará crear un un producto  con todos los campos menos el título y el p
 recibir un error customizado, en consola debe aparecer una lista de las propiedades requeridas y los tipos (como visto en clase) para reconocer
 en qué propiedades no se enviaron los datos.) ✔
 IMPLEMENTACION DE LOGGER  ✔
+DOCUMENTACIÓN DE API (
+Se debe tener documentado el módulo de productos.
+Se debe tener documentado el módulo de carrito
+No realizar documentación de sesiones
+)  ✔
+
 

@@ -4,6 +4,8 @@ import sessions from 'express-session';
 import passport from 'passport';
 import path from 'path';
 import MongoStore from 'connect-mongo';
+import swaggerJsDoc from 'swagger-jsdoc';
+import swaggerUi from 'swagger-ui-express';
 
 import indexRouter from './routers/index.router.js';
 import sessionsRouter from './routers/sessions.router.js';
@@ -46,11 +48,28 @@ initPassport();
 app.use(passport.initialize());
 app.use(passport.session())
 
+//Documentacion de API
+if (process.env.NODE_ENV !== 'production') {
+  const swaggerOpts = {
+    definition: {
+      openapi: '3.0.0',
+      info: {
+        title: 'Ecommerce API',
+        description: '<h2>Esta es la documentación de la API de Ecommcerce. Una aplicación para comprar productos 🛠.</h2>',
+      },
+    },
+    apis: [path.join(__dirname, '..', 'docs', '**', '*.yaml')],
+  };
+  const specs = swaggerJsDoc(swaggerOpts);
+  app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(specs));
+}
+
 app.use('/', indexRouter);
 app.use('/api', sessionsRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/product', productRouter);
 app.use('/api/notification', notificationRouter);
+
 
 app.use(errorHandlerMiddleware);
 
