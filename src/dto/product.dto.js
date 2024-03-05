@@ -1,5 +1,6 @@
 export class ProductDTO {
       constructor(product) {
+            this._id = product._id;
             this.title= product.title
             this.description= product.description
             this.price= product.price

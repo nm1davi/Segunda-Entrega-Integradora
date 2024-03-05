@@ -1,6 +1,6 @@
 cart.yml:
 paths:
-  /api/cart/{cid}:
+  /api/cart/cartinfo/{cid}:
     get:
       summary: Obtener información de un carrito
       tags:

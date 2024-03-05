@@ -50,7 +50,7 @@ router.post('/', upload.single('thumbnail'), async (req, res, next) => {
           // Agrega la ruta del archivo a los datos del producto
           const productData = { ...body, thumbnail };
           const product = await ProductsController.create(productData);
-          res.status(201).json(product);
+          res.status(201).json({ message: 'Nuevo producto creado', productId: product._id });
           // Si se proporciona un archivo, utiliza la ruta del archivo
   } catch (error) {
     next(error);
@@ -94,7 +94,7 @@ router.put('/:productId', upload.single('thumbnail'), async (req, res) => {
       try {
         const { productId } = req.params;
         await ProductsController.deleteById(productId);
-        res.status(204).json({message: 'Product deleted successfully'});
+        res.status(200).json({message: 'Product deleted successfully'});
       } catch (error) {
         logger.error("Error: ", error.message);
         res.status(500).json({ error: 'Internal Server Error' });

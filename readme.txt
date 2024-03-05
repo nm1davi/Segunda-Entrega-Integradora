@@ -31,5 +31,9 @@ Se debe tener documentado el módulo de productos.
 Se debe tener documentado el módulo de carrito
 No realizar documentación de sesiones
 )  ✔
-
-
+Módulos de testing para proyecto final{
+    - Router de products.
+    - Router de carts.
+    - Router de sessions.
+    (npx mocha -timeout 10000 tests/integrations/supertest.test.js) para ejecutar el test
+} ✔

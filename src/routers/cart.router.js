@@ -42,7 +42,7 @@ Handlebars.registerHelper('multiply', function(a, b) {
   return a * b;
 });
 
-
+//Router para renderizar el carrito con los Productos
 router.get('/:cid', myMiddleware, async (req, res) => {
   const { cid } = req.params;
   try {
@@ -58,6 +58,22 @@ router.get('/:cid', myMiddleware, async (req, res) => {
       user: req.user.toJSON(),
       products: cartInfo.products,
     });
+  } catch (error) {
+    logger.error('Error: ', error);
+    res.status(500).json({ error: 'Error interno del servidor' });
+  }
+});
+//Router para ver la informacion del Carrito del Cliente
+router.get('/cartinfo/:cid', myMiddleware, async (req, res) => {
+  const { cid } = req.params;
+  try {
+    const cartInfo = await CartController.getCartById(cid);
+
+
+    if (!cartInfo) {
+      return res.status(404).json({ error: 'Carrito no encontrado' });
+    }
+    res.json(cartInfo);
   } catch (error) {
     logger.error('Error: ', error);
     res.status(500).json({ error: 'Error interno del servidor' });
