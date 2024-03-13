@@ -1,10 +1,13 @@
 import { Router } from "express";
 import UserModel from "../dao/models/user.model.js";
 import {createHash, isValidPassword} from '../utils/utils.js'
+
 import passport from "passport";
-const router = Router();
 import Cart from '../dao/models/cart.model.js';
 import { logger } from "../config/logger.js";
+import { emailUserValidator } from "../middlewares/email-user-validator.middleware.js";
+
+const router = Router();
 
 //Para loguear una persona
 router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '/login'}) , async (req, res) => {
@@ -20,6 +23,7 @@ router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '
           // Guarda los cambios en el usuario para agregar la referencia al carrito
           await req.user.save();
         }
+        await req.user.updateLastConnection();
         req.session.userRole = req.user.role;
         const userRole = req.user.role;
 
@@ -28,7 +32,10 @@ router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '
       res.redirect("/admin");
     } else if (userRole === 'user') {
       res.redirect("/profile");
-    } else {
+    } else if (userRole === 'premium'){
+      res.redirect("/api/users/premium");
+    }
+    else {
       // Puedes manejar otros roles o situaciones según sea necesario
       res.status(403).send("Acceso no autorizado");
     }
@@ -40,7 +47,7 @@ router.post("/sessions/login",passport.authenticate('login', {failureRedirect: '
     
 
 //Para registrar una persona
-router.post("/sessions/register", passport.authenticate('register', {failureRedirect: '/register'}) ,async (req, res) => {
+router.post("/sessions/register" , emailUserValidator, passport.authenticate('register', {failureRedirect: '/register'}) ,async (req, res) => {
       req.session.user = req.user;
       // Redirecciono a login
       res.redirect("/login");
@@ -80,16 +87,25 @@ router.get("/sessions/profile", async (req, res) => {
 
 //Logout de la cuenta
 router.get("/session/logout", async (req, res) => {
-      req.session.destroy((error) => {
-            if (error) {
-                  return res.render("error", {
-                        title: "Error ❌",
-                        messageError: error.message,
-                  });
-            }
-            res.redirect("/");
-      });
-});
+      try {
+        // Actualiza la última conexión del usuario antes de cerrar sesión
+        await req.user.updateLastConnection();
+    
+        req.session.destroy((error) => {
+          if (error) {
+            return res.render("error", {
+              title: "Error ❌",
+              messageError: error.message,
+            });
+          }
+          res.redirect("/");
+        });
+      } catch (error) {
+        logger.error("Error al cerrar sesión:", error);
+        res.status(500).send("Error interno del servidor");
+      }
+    });
+    
 
 router.get('/sessions/github', passport.authenticate('github', { scope: ['user:email']}));
 

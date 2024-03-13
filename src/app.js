@@ -12,6 +12,7 @@ import sessionsRouter from './routers/sessions.router.js';
 import cartRouter from './routers/cart.router.js';
 import productRouter from './routers/product.router.js';
 import notificationRouter from './routers/notifications.router.js';
+import userRouter from './routers/user.router.js';
 
 import { errorHandlerMiddleware} from './middlewares/errorHandlerMiddleware.js'
 import { __dirname } from './utils/utils.js';
@@ -68,6 +69,7 @@ app.use('/', indexRouter);
 app.use('/api', sessionsRouter);
 app.use('/api/cart', cartRouter);
 app.use('/api/product', productRouter);
+app.use('/api/users', userRouter);
 app.use('/api/notification', notificationRouter);
 
 

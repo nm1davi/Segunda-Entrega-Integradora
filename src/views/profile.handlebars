@@ -27,6 +27,7 @@
     <li><p><strong>Role:</strong> {{user.role}}</p></li>
     <li><p><strong>Edad:</strong> {{user.age}}</p></li>
     <li><p><strong>Carrito:</strong> {{user.cart}}</p></li>
+    <li><p><strong>ID Usuario:</strong> {{user.id}}</p></li>
     <ul class="menu">
   <li>
     <a href="/api/session/logout">
@@ -43,6 +44,12 @@
   </button>
   <button class="btn btn-secondary" type="button">
     <a class="btnContacto" href="/api/product/mockingproducts">Mockingproducts <i class="bi bi-qr-code"></i></a>
+  </button>
+  <button class="btn btn-secondary" type="button">
+    <a class="btnContacto" href="/api/users/add/documents">Agregar Archivo <i class="bi bi-file-earmark-diff-fill"></i></a>
+  </button>
+  <button class="btn btn-secondary" type="button" id="cambiarRolBtn"  onclick="cambiarDeRol('{{user.id}}')">
+    Cambiar Rol <i class="bi bi-toggle-on"></i>
   </button>
 </div>
     </nav>

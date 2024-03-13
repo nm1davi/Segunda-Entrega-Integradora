@@ -4,26 +4,9 @@ import ProductsController from '../controllers/products.controllers.js'
 import { UserDTO } from '../dto/user.dto.js';
 import { logger } from '../config/logger.js';
 
+import {authorizeAdmin, authorizeUser} from '../middlewares/authorize-middlewares.js'
+
 const router = Router();
-
-//MIDLEWARES 
-const authorizeAdmin = (req, res, next) => {
-  const user = req.user;
-
-  if (!user || user.role !== 'admin') {
-    return res.status(403).json({ message: 'No tienes permisos de administrador' });
-  }
-  next();
-};
-
-const authorizeUser = (req, res, next) => {
-  const user = req.user;
-
-  if (!user || user.role !== 'user') {
-    return res.status(403).json({ message: 'No tienes permisos de usuario' });
-  }
-  next();
-};
 
 // GET LOGGER
 router.get('/loggerTest', (req, res) => {
