@@ -56,7 +56,10 @@
   <main>
       <div class="contenedorBotones">
               <button class="botonDePremium" type="button">
-            <a class="" href="/admin/addProduct">AGREGAR UN PRODUCTO</a>
+            <a class="" href="/api/users/premium/addProduct">AGREGAR UN PRODUCTO</a>
+            </button>
+              <button class="botonDePremium" type="button">
+            <a class="" href="/api/users/premium/deleteProduct">ELIMINAR UN PRODUCTO</a>
             </button>
       </div>
       <div class="contenedorTarjetasProductos">
@@ -74,6 +77,7 @@
     <li class="list-group-item"><strong>Categoría:</strong> {{this.category}}</li>
     <li class="list-group-item"><strong>Estado:</strong> {{this.status}}</li>
     <li class="list-group-item"><strong>Id Producto:</strong> {{this._id}}</li>
+    <li class="list-group-item"><strong>Owner:</strong> {{this.owner}}</li>
   </ul>
   <div class="card-body">
         <ul class="menu">

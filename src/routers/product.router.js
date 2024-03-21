@@ -7,6 +7,7 @@ import { generatorProductError } from '../utils/causeMessageError.js';
 import {customError} from '../utils/customError.js';
 import enumsError from '../utils/enumsError.js';
 import { logger } from '../config/logger.js';
+import { authorizeDelete} from '../middlewares/authorize-middlewares.js'
 
 const router = Router();
 
@@ -27,7 +28,10 @@ const upload = multer({ storage: storage });
 // Ruta para crear un producto
 router.post('/', upload.single('thumbnail'), async (req, res, next) => {
   try {
-    const { body, file } = req;
+    const { body, file, user } = req;
+    if (!user) {
+      return res.status(401).json({ message: 'Usuario no autenticado' });
+    }
     const { 
       title,
       description,
@@ -47,8 +51,10 @@ router.post('/', upload.single('thumbnail'), async (req, res, next) => {
           });
         }
           const thumbnail = file ? `/uploads/${file.filename}` : '';
+          const ownerId = user.email;
           // Agrega la ruta del archivo a los datos del producto
-          const productData = { ...body, thumbnail };
+          const productData = { ...body, thumbnail, owner: ownerId };
+
           const product = await ProductsController.create(productData);
           res.status(201).json({ message: 'Nuevo producto creado', productId: product._id });
           // Si se proporciona un archivo, utiliza la ruta del archivo
@@ -90,7 +96,7 @@ router.put('/:productId', upload.single('thumbnail'), async (req, res) => {
 
     
     // Ruta para eliminar un producto
-    router.delete('/:productId', async (req, res) => {
+    router.delete('/:productId', authorizeDelete, async (req, res) => {
       try {
         const { productId } = req.params;
         await ProductsController.deleteById(productId);

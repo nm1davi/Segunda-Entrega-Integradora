@@ -77,31 +77,37 @@ router.get('/premium', authorizeAdmin, async (req, res) =>{
 router.put('/premium/:uid', async (req, res) => {
   try {
     const userId = req.params.uid;
-    // Obtén el usuario y actualiza el rol
     const user = await userModel.findById(userId);
-    
     if (!user) {
       return res.status(404).json({ error: 'Usuario no encontrado' });
     }
-
     user.role = user.role === 'user' ? 'premium' : 'user';
     await user.save();
-    
     req.session.userRole = user.role;
-    // Redirige según el nuevo rol
-    if (user.role === 'user') {
-      res.redirect('/profile');
-    } else if (user.role === 'premium') {
-      res.redirect('/premium');
-    } else {
-      res.redirect('/defaultProfile');
-    }
+    // Mostramos msj de éxito
+    res.status(200).json({ message: 'Rol cambiado con éxito', role: user.role });
   } catch (error) {
     logger.error('Error:', error);
     res.status(500).json({ error: 'Error al cambiar el rol' });
   }
 });
 
+//Agregar un producto siendo Premium
+router.get('/premium/addProduct', async (req, res) => {
+  const userDTO = new UserDTO(req.user);
+  res.render('addProductPremium', {
+    title: 'Premium ✅',
+    user: userDTO,
+  });
+});
+//Eliminar un producto siendo Premium
+router.get('/premium/deleteProduct', async (req, res) => {
+  const userDTO = new UserDTO(req.user);
+  res.render('deleteProductPremium', {
+    title: 'Premium ✅',
+    user: userDTO,
+  });
+});
 
 
 

@@ -34,8 +34,9 @@ function typeAdmin() {
   }
 }
 
+
 document.addEventListener('DOMContentLoaded', () => {
-  const formAddProduct = document.getElementById('formAddProduct');
+  const formAddProduct = document.getElementById('formAddProductPremium');
 
   formAddProduct.addEventListener('submit', async (event) => {
     event.preventDefault();
@@ -67,7 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
         console.error('Error al agregar el producto');
       }
     } catch (error) {
-      console.error('Error de red:', error);
+      logger.error("Error: ", error.message);
     }
   })
 });
@@ -95,7 +96,13 @@ async function eliminarProducto() {
           location.reload();
         }, 100);
       });
-
+    } else if (response.status === 403) {
+      // El usuario no está autorizado para eliminar el producto
+      Swal.fire({
+        title: 'Error',
+        text: 'No estás autorizado para eliminar este producto',
+        icon: 'error',
+      });
     } else if (response.headers.get('content-type').includes('application/json')) {
       // La respuesta contiene datos JSON, manejar el error
       const responseData = await response.json();
@@ -103,10 +110,6 @@ async function eliminarProducto() {
         title: 'Error',
         text: responseData.error || 'Error al eliminar el producto',
         icon: 'error',
-      }).then(() => {
-        setTimeout(() => {
-          location.reload();
-        }, 100);
       });
     } else {
       // La respuesta no contiene datos JSON, manejar el error
@@ -114,14 +117,10 @@ async function eliminarProducto() {
         title: 'Error',
         text: 'Error al eliminar el producto',
         icon: 'error',
-      }).then(() => {
-        setTimeout(() => {
-          location.reload();
-        }, 100);
       });
     }
   } catch (error) {
-    console.error('Error:', error.message);
+    logger.error("Error: ", error.message);
     Swal.fire({
       title: 'Error',
       text: 'Error interno del servidor',
@@ -133,98 +132,3 @@ async function eliminarProducto() {
     });
   }
 }
-
-async function actualizarProducto() {
-  try {
-    const productId = document.getElementById('productId').value;
-    const title = document.querySelector('input[name="title"]').value;
-    const description = document.querySelector('input[name="description"]').value;
-    const price = document.querySelector('input[name="price"]').value;
-    const image = document.querySelector('input[name="thumbnail"]').value;
-    const code = document.querySelector('input[name="code"]').value;
-    const stock = document.querySelector('input[name="stock"]').value;
-    const category = document.querySelector('input[name="category"]').value;
-    const statusSelect = document.querySelector('select[name="status"]');
-    const status = statusSelect.options[statusSelect.selectedIndex].value;
-
-    const updatedFields = {
-      title,
-      description,
-      price,
-      image,
-      code,
-      stock,
-      category,
-      status,
-    };
-    const filteredFields = Object.fromEntries(
-      Object.entries(updatedFields).filter(([_, value]) => value !== '')
-    );
-    const data = {
-      productId,
-      ...filteredFields,
-    };
-    console.log(data)
-    // Realizar una solicitud PUT al servidor
-    const response = await fetch(`/api/product/${productId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(data)
-    });
-
-    if (response.ok) {
-      // Producto eliminado exitosamente
-      Swal.fire({
-        title: 'Éxito',
-        text: 'Producto actualizado exitosamente',
-        icon: 'success',
-      }).then(() => {
-        setTimeout(() => {
-          location.reload();
-        }, 100);
-      });
-
-    } else if (response.headers.get('content-type').includes('application/json')) {
-      // La respuesta contiene datos JSON, manejar el error
-      const responseData = await response.json();
-      Swal.fire({
-        title: 'Error',
-        text: responseData.error || 'Error al actualizar el producto',
-        icon: 'error',
-      }).then(() => {
-        setTimeout(() => {
-          location.reload();
-        }, 100);
-      });
-    } else {
-      // La respuesta no contiene datos JSON, manejar el error
-      Swal.fire({
-        title: 'Error',
-        text: 'Error al actualizar el producto',
-        icon: 'error',
-      }).then(() => {
-        setTimeout(() => {
-          location.reload();
-        }, 100);
-      });
-    }
-  } catch (error) {
-    console.error('Error:', error.message);
-    Swal.fire({
-      title: 'Error',
-      text: 'Error interno del servidor',
-      icon: 'error',
-    }).then(() => {
-      setTimeout(() => {
-        location.reload();
-      }, 100);
-    });
-  }
-}
-
-
-
-
-

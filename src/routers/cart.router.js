@@ -9,6 +9,7 @@ import TicketsService from '../services/ticket.service.js';
 import CartController from '../controllers/carts.controllers.js';
 import ProductsController from '../controllers/products.controllers.js';
 import { logger } from '../config/logger.js';
+import { authorizeAddToCart} from '../middlewares/authorize-middlewares.js'
 
 import { v4 as uuidv4 } from 'uuid';
 import Handlebars from 'handlebars';
@@ -93,7 +94,8 @@ router.post('/', async (req, res) => {
 });
 
 // Ruta para agregar un producto a un carrito
-router.post('/:cid/product/:pid', async (req, res) => {
+// ver authorizeAddToCart
+router.post('/:cid/product/:pid', authorizeAddToCart,  async (req, res) => {
   const { cid, pid } = req.params;
   const { quantity } = req.body;
 
@@ -128,7 +130,8 @@ router.post('/:cid/product/:pid', async (req, res) => {
           stock: product.stock,
           category: product.category,
           status: product.status,
-          _id: product._id // Asegurar que se incluya el ID del producto
+          _id: product._id,
+          // owner: product.owner
         },
         quantity: parseInt(quantity)
       });

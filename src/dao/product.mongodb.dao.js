@@ -12,7 +12,8 @@ export default class ProductDao {
           code: product.code,
           stock: product.stock,
           category: product.category,
-          status: product.status
+          status: product.status,
+          owner: product.owner
         }))
         return formattedProducts;
     }

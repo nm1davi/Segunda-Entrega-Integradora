@@ -12,7 +12,8 @@ export default class ProductRepository {
                   code,
                   stock,
                   category,
-                  status
+                  status,
+                  owner
             } = data;
             const dataDao = {
                   title,  
@@ -22,7 +23,8 @@ export default class ProductRepository {
                   code,
                   stock,
                   category,
-                  status
+                  status,
+                  owner
                 };
             const product = await this.dao.create(dataDao);
             return new ProductDTO(product);

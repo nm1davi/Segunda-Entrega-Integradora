@@ -40,9 +40,10 @@
           </button>
           <ul class="dropdown-menu">
             <li><p><strong>Carrito Id:</strong> {{cartId}}</p></li>
+            <li><p><strong>Role:</strong> {{user.role}}</p></li>
             <ul class="menu">
               <li>
-                <a href="/profile">
+                <a id="volverLink" href="#" data-rol="{{user.role}}">
                   <span>Volver</span>
                   <span>
                     <i class="bi bi-arrow-bar-left"></i>

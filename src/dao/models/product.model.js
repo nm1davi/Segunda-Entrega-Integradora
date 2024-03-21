@@ -10,6 +10,7 @@ const productSchema = new mongoose.Schema({
       'stock': {type: 'Number', required: true},
       'category': {type: 'String', required: true},
       'status': {type: 'String', required: true, default: 'true'},
+      'owner': { type: 'String', ref: 'User', required: true, default: 'admin' },
 }, {timestamps: true});
 
 export default mongoose.model('Product', productSchema);

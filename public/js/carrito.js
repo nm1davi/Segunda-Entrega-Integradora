@@ -109,7 +109,7 @@ window.onload = function () {
       <h1>Carrito Vacío</h1>
       <ul class="menu">
       <li>
-        <a href="/profile">
+        <a id="volverLink" href="#" data-rol="{{user.role}}">
           <span>Volver a la Tienda</span>
           <span>
             <i class="bi bi-arrow-bar-left"></i>
@@ -119,6 +119,18 @@ window.onload = function () {
     </ul>
     </div>
   `;
+  
+  const volverLink = document.getElementById('volverLink');
+  volverLink.addEventListener('click', function(event) {
+    event.preventDefault();
+    const userRole = volverLink.dataset.rol;
+    if(userRole === 'premium'){
+      window.location.href = '/api/users/premium';
+    } else if (userRole === 'user'){
+      window.location.href = '/profile';
+    }
+  });
+
   } else {
     // Si hay productos, asegurarse de que no se muestre el mensaje de carrito vacío
     const contenedorDescripcion = document.querySelector('.carritoVacio');
@@ -165,3 +177,16 @@ document.getElementById('pagarBtn').addEventListener('click', async (event) => {
   }
 });
 
+//Funcion par redireccionar dependiendo del Rol
+document.addEventListener('DOMContentLoaded', ()=>{
+  const volverLink = document.getElementById('volverLink');
+  volverLink.addEventListener('click', (event) =>{
+    event.preventDefault();
+    const userRole = volverLink.dataset.rol;
+    if(userRole === 'premium'){
+      window.location.href = '/api/users/premium';
+    } else if (userRole === 'user'){
+      window.location.href = '/profile';
+    }
+  })
+})

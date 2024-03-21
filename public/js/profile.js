@@ -35,23 +35,23 @@ async function cambiarDeRol(userId) {
     });
 
     if (response.ok) {
-      // Manejar la respuesta exitosa, por ejemplo, mostrar un mensaje al usuario
-      console.log('Rol cambiado con éxito');
-      Swal.fire('Rol cambiado con éxito').then(() => {
-        setTimeout(() => {
-          location.reload();
-        }, 100);
-      });
+      const data = await response.json();
+      Swal.fire('Rol cambiado con éxito');
+      // Redirige según el nuevo rol 
+      if (data.role === 'user') {
+        window.location.href = '/profile';
+      } else if (data.role === 'premium') {
+        window.location.href = '/api/users/premium';
+      } else {
+        window.location.href = '/defaultProfile';
+      }
     } else {
-      // Manejar errores en la respuesta
       console.error('Error al cambiar el rol');
     }
   } catch (error) {
-    // Manejar errores en la solicitud
     console.error('Error de red:', error);
   }
 }
-
 
 
 
